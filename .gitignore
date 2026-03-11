@@ -1,5 +1,6 @@
+# generated artifacts
+out/
+
+# python cache
 __pycache__/
 *.pyc
-.venv/
-
-keys/evidence_signing_private.pem
