@@ -1,186 +1,233 @@
-# QSP Stage215 – Public Evidence Verification
+# QSP Stage215
 
-MIT License © 2025 Motohiro Suzuki
+## Evidence Transparency Log
 
----
+**QSP (Quantum Security Protocol)** explores how security claims, formal reasoning, and executable validation can be connected through verifiable evidence.
 
-## Overview
+Stage215 introduces an **append-only transparency log for security evidence**, extending signed evidence verification with tamper-evident publication history.
 
-Stage215 extends Stage213 by making the signed evidence bundle easy for third parties to verify.
-
-While Stage213 introduced:
-
-- evidence bundle generation
-- SHA256 hashing
-- RSA signing
-- public-key verification
-
-Stage215 adds a clear public verification entry point so that anyone can verify the evidence bundle with a single command.
-
-This stage focuses on **public verifiability**, **reviewability**, and **reproducible validation**.
+This stage focuses on **evidence transparency and reproducibility**.
 
 ---
 
-## Motivation
+# Overview
 
-Signed evidence is valuable, but review friction reduces its practical impact.
+Security claims are only meaningful if their supporting evidence can be inspected and verified.
 
-A reviewer, researcher, or external auditor should be able to:
+QSP structures verification as a traceable pipeline:
 
-1. clone the repository
-2. run one command
-3. verify that the evidence bundle has not been tampered with
-
-Stage215 reduces that friction.
-
----
-
-## Verification Model
-
-Stage213 established:
-
+```
 Claim
 ↓
 CI Job
 ↓
 Evidence Artifact
 ↓
-CI Run ID
-↓
 SHA256
 ↓
-Signature
+Cryptographic Signature
 ↓
-Verification
-
-Stage215 extends this into:
-
-Claim
-↓
-CI Job
-↓
-Evidence Artifact
-↓
-CI Run ID
-↓
-SHA256
-↓
-Signature
-↓
-Public Verification Entry Point
-
-This means the signed evidence is not only present, but also straightforward for third parties to validate.
-
----
-
-## Repository Structure
-
-```text
-stage215
-│
-├─ evidence_bundle/
-│   ├─ evidence_bundle.json
-│   ├─ evidence_bundle.sha256
-│   └─ summary.md
-│
-├─ signatures/
-│   ├─ evidence_bundle.sig
-│   └─ evidence_bundle.signature.json
-│
-├─ keys/
-│   └─ evidence_signing_public.pem
-│
-├─ tools/
-│   ├─ build_signed_evidence_bundle.py
-│   ├─ write_bundle_sha256.py
-│   ├─ sign_evidence_bundle.py
-│   └─ run_stage215_bundle.sh
-│
-├─ verification/
-│   └─ verify_signature.py
-│
-├─ verify_bundle.sh
-├─ claims/
-├─ tests/
-├─ docs/
-└─ out/
 Public Verification
+↓
+Transparency Log
+```
 
-Anyone can verify the signed evidence bundle locally.
+Stage215 ensures that **evidence publication itself becomes verifiable**.
 
-Verification command
-./verify_bundle.sh
-Expected result
-[OK] signature verification passed
-Verified OK
+---
 
-[OK] public verification complete
-What is Verified
+# Evidence Transparency Log
 
-The verification checks that:
+Stage215 introduces an **append-only transparency log** for evidence artifacts.
 
-the evidence bundle exists
+Evidence entries are recorded as log entries containing:
 
-the signature exists
+```
+Evidence
+↓
+SHA256
+↓
+Log Entry
+```
 
-the public key exists
+Each new piece of evidence becomes a **new log entry**, ensuring:
 
-the RSA signature matches the evidence bundle
+* evidence cannot be silently replaced
+* publication history is visible
+* verification is reproducible
 
-the evidence bundle has not been modified after signing
+Example structure:
 
-If the bundle is changed after signing, verification fails.
+```
+Log Entry 1
+Evidence1
+hash1
 
-Quick Review Flow
+Log Entry 2
+Evidence2
+hash2
 
-A reviewer can verify the bundle with the following steps:
+Log Entry 3
+Evidence3
+hash3
+```
 
-git clone https://github.com/mokkunsuzuki-code/stage215.git
-cd stage215
-./verify_bundle.sh
+Previous entries are **not meant to be modified**.
 
-This is the intended review path for external readers.
+---
 
-Relation to Previous Stages
-Stage	Feature
-Stage210	Claim → Evidence mapping
-Stage211	Evidence bundle generation
-Stage212	CI linkage
-Stage213	Signed Evidence Bundle
-Stage215	Public Evidence Verification
+# Why Transparency Matters
 
-Stage215 improves external reviewability by minimizing verification friction.
+Researchers reviewing security systems often ask:
 
-Security Properties
+> Can the evidence be replaced later?
 
-Stage215 provides:
+Digital signatures alone prove authenticity, but they do not prove that earlier evidence was not replaced.
 
-tamper-evident evidence
+Transparency logs address this by recording **evidence publication history**.
 
-cryptographic authenticity
+Stage215 draws inspiration from:
 
-public-key verification
+* Certificate Transparency
+* Sigstore
+* Software Supply Chain Security
 
-external review readiness
+---
 
-reproducible validation entry point
+# Repository Structure
 
-Research Relevance
+```
+examples/
+  evidence/
+    summary.md
+    summary.sha256.txt
+    summary.sig
 
-This stage is relevant to:
+tools/
+  generate_transparency_log.py
+  verify_transparency_log.py
+  run_stage215_bundle.sh
 
-reproducible security research
+tests/
+  test_transparency_log.py
 
-verifiable evidence pipelines
+out/  (generated artifacts – ignored by git)
+```
 
-CI-driven security validation
+Example evidence artifacts are stored under:
 
-externally reviewable cryptographic artifacts
+```
+examples/evidence/
+```
 
-Stage215 helps move from “signed evidence exists” to “signed evidence can be independently checked with minimal effort.”
+Runtime-generated outputs are written to:
 
-License
+```
+out/
+```
+
+The `out/` directory is intentionally excluded from version control.
+
+---
+
+# Running the Evidence Bundle
+
+Generate a transparency log entry:
+
+```
+bash tools/run_stage215_bundle.sh
+```
+
+This will:
+
+1. compute evidence hash
+2. record evidence metadata
+3. append entry to the transparency log
+4. verify log integrity
+
+---
+
+# Verifying the Transparency Log
+
+To verify the log:
+
+```
+python3 tools/verify_transparency_log.py \
+  --log out/transparency/transparency_log.jsonl
+```
+
+Verification checks:
+
+* evidence file existence
+* hash consistency
+* log entry sequence
+* signature metadata integrity
+
+---
+
+# Security Claim Validation
+
+QSP connects protocol claims to executable validation.
+
+Example flow:
+
+```
+Security Claim
+↓
+CI Validation
+↓
+Evidence Artifact
+↓
+Transparency Log Entry
+```
+
+This structure helps ensure that:
+
+* claims remain testable
+* evidence is traceable
+* verification can be reproduced
+
+---
+
+# Key Management Policy
+
+Evidence artifacts may be signed to support authenticity verification.
+
+Key management rules:
+
+* **Private signing keys are never committed to the repository**
+* Only **public verification keys** are stored in `keys/`
+* If a private key is exposed, it must be **rotated immediately**
+* Evidence signatures can always be verified using the published public key
+
+---
+
+# Research Goal
+
+The purpose of QSP is not to claim new cryptographic primitives.
+
+Instead, the goal is to explore:
+
+* explicit security assumptions
+* traceable verification pipelines
+* reproducible security evidence
+
+Stage215 focuses on **transparency of evidence publication**.
+
+---
+
+# Inspiration
+
+The design philosophy of Stage215 is influenced by:
+
+* Certificate Transparency
+* Sigstore
+* Reproducible security research
+* Software supply chain verification
+
+---
+
+# License
 
 MIT License
-
-Copyright (c) 2025 Motohiro Suzuki
+© 2025 Motohiro Suzuki
