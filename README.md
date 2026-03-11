@@ -94,7 +94,7 @@ stage214
 │   ├─ build_signed_evidence_bundle.py
 │   ├─ write_bundle_sha256.py
 │   ├─ sign_evidence_bundle.py
-│   └─ run_stage213_bundle.sh
+│   └─ run_stage214_bundle.sh
 │
 ├─ verification/
 │   └─ verify_signature.py
