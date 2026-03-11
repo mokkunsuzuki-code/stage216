@@ -1,4 +1,4 @@
-# QSP Stage214 – Public Evidence Verification
+# QSP Stage215 – Public Evidence Verification
 
 MIT License © 2025 Motohiro Suzuki
 
@@ -6,7 +6,7 @@ MIT License © 2025 Motohiro Suzuki
 
 ## Overview
 
-Stage214 extends Stage213 by making the signed evidence bundle easy for third parties to verify.
+Stage215 extends Stage213 by making the signed evidence bundle easy for third parties to verify.
 
 While Stage213 introduced:
 
@@ -15,7 +15,7 @@ While Stage213 introduced:
 - RSA signing
 - public-key verification
 
-Stage214 adds a clear public verification entry point so that anyone can verify the evidence bundle with a single command.
+Stage215 adds a clear public verification entry point so that anyone can verify the evidence bundle with a single command.
 
 This stage focuses on **public verifiability**, **reviewability**, and **reproducible validation**.
 
@@ -31,7 +31,7 @@ A reviewer, researcher, or external auditor should be able to:
 2. run one command
 3. verify that the evidence bundle has not been tampered with
 
-Stage214 reduces that friction.
+Stage215 reduces that friction.
 
 ---
 
@@ -53,7 +53,7 @@ Signature
 ↓
 Verification
 
-Stage214 extends this into:
+Stage215 extends this into:
 
 Claim
 ↓
@@ -76,7 +76,7 @@ This means the signed evidence is not only present, but also straightforward for
 ## Repository Structure
 
 ```text
-stage214
+stage215
 │
 ├─ evidence_bundle/
 │   ├─ evidence_bundle.json
@@ -94,7 +94,7 @@ stage214
 │   ├─ build_signed_evidence_bundle.py
 │   ├─ write_bundle_sha256.py
 │   ├─ sign_evidence_bundle.py
-│   └─ run_stage214_bundle.sh
+│   └─ run_stage215_bundle.sh
 │
 ├─ verification/
 │   └─ verify_signature.py
@@ -135,8 +135,8 @@ Quick Review Flow
 
 A reviewer can verify the bundle with the following steps:
 
-git clone https://github.com/mokkunsuzuki-code/stage214.git
-cd stage214
+git clone https://github.com/mokkunsuzuki-code/stage215.git
+cd stage215
 ./verify_bundle.sh
 
 This is the intended review path for external readers.
@@ -147,13 +147,13 @@ Stage210	Claim → Evidence mapping
 Stage211	Evidence bundle generation
 Stage212	CI linkage
 Stage213	Signed Evidence Bundle
-Stage214	Public Evidence Verification
+Stage215	Public Evidence Verification
 
-Stage214 improves external reviewability by minimizing verification friction.
+Stage215 improves external reviewability by minimizing verification friction.
 
 Security Properties
 
-Stage214 provides:
+Stage215 provides:
 
 tamper-evident evidence
 
@@ -177,7 +177,7 @@ CI-driven security validation
 
 externally reviewable cryptographic artifacts
 
-Stage214 helps move from “signed evidence exists” to “signed evidence can be independently checked with minimal effort.”
+Stage215 helps move from “signed evidence exists” to “signed evidence can be independently checked with minimal effort.”
 
 License
 
