@@ -231,3 +231,52 @@ The design philosophy of Stage215 is influenced by:
 
 MIT License
 © 2025 Motohiro Suzuki
+
+---
+
+## Stage216: Transparency Log + Merkle Tree + Inclusion Proof
+
+Stage216 introduces a research-grade transparency layer for evidence artifacts.
+
+### What this stage adds
+
+- **Transparency Log**
+  - Records each evidence artifact with:
+    - relative path
+    - SHA-256 digest
+    - size in bytes
+    - Merkle leaf hash
+- **Merkle Tree**
+  - Builds a Merkle tree over canonicalized log entries
+  - Produces a single **Merkle Root** representing the full evidence set
+- **Inclusion Proof**
+  - Generates a proof for each artifact
+  - Enables third parties to verify that a given artifact is included in the committed transparency log
+
+### Output files
+
+- `out/transparency/transparency_log.json`
+- `out/transparency/merkle_tree.json`
+- `out/transparency/root.txt`
+- `out/transparency/checkpoint.json`
+- `out/transparency/inclusion_proofs/*.proof.json`
+
+### Security meaning
+
+This stage upgrades the project from:
+
+- signed evidence bundle
+
+to:
+
+- **tamper-evident, inclusion-verifiable transparency structure**
+
+That is a substantial step toward a research-level transparency foundation.
+
+### Build
+
+```bash
+python3 tools/build_transparency_log.py --input-dir out/evidence_bundle --output-dir out/transparency
+Verify one proof
+python3 tools/verify_inclusion_proof.py out/transparency/inclusion_proofs/<proof-file>.proof.json
+
