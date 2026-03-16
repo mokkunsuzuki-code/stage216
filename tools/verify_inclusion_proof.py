@@ -4,19 +4,31 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import sys
+from pathlib import Path
 from typing import Any, Dict
 
-from crypto.merkle import verify_inclusion_proof
+# Ensure project root is importable when running:
+# python3 tools/verify_inclusion_proof.py ...
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from crypto.merkle import verify_inclusion_proof  # noqa: E402
 
 
 def canonical_json_bytes(obj: Dict[str, Any]) -> bytes:
-    return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    return json.dumps(
+        obj,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+    ).encode("utf-8")
 
 
 def leaf_hash_from_entry(entry: Dict[str, Any]) -> str:
-    import hashlib
-
     minimal_entry = {
         "index": entry["index"],
         "path": entry["path"],
@@ -32,7 +44,11 @@ def main() -> None:
     parser.add_argument("proof_file", help="Path to *.proof.json")
     args = parser.parse_args()
 
-    with open(args.proof_file, "r", encoding="utf-8") as f:
+    proof_path = Path(args.proof_file).resolve()
+    if not proof_path.exists():
+        raise SystemExit(f"[ERROR] proof file not found: {proof_path}")
+
+    with proof_path.open("r", encoding="utf-8") as f:
         doc = json.load(f)
 
     entry = doc["entry"]
